@@ -1,0 +1,15 @@
+services:
+  app:
+    build: .
+    container_name: dp3-prototype-app
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.dp3-prototype.rule=Host(`dp3.judejoubert.com`)"
+      - "traefik.http.routers.dp3-prototype.entrypoints=web"
+      - "traefik.http.services.dp3-prototype.loadbalancer.server.port=80"
+    networks:
+      - traefik_proxy
+
+networks:
+  traefik_proxy:
+    external: true
