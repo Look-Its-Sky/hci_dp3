@@ -56,7 +56,7 @@ const AddGoalModal: FC<AddGoalModalProps> = ({ show, onClose, onAddGoal }) => {
               <input type="number" id="targetAmount" value={targetAmount} onChange={(e) => setTargetAmount(e.target.value)} placeholder="5000" min="0" />
             </div>
             <div className="form-group">
-              <label htmlFor="currentAmount">Current Amount (Optional, $)</label>
+              <label htmlFor="currentAmount">Current Savings (Optional, $)</label>
               <input type="number" id="currentAmount" value={currentAmount} onChange={(e) => setCurrentAmount(e.target.value)} placeholder="0" min="0" />
             </div>
           </div>
