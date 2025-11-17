@@ -1,3 +1,11 @@
+# GENCENTS - Team 3
+
+Team Members:
+- Jude Joubert
+- Charitha Sarraju
+- Kavyadharshini Seenuvasan
+- Marc Manoj
+
 # Getting Started with Create React App
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
