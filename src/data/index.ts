@@ -68,8 +68,8 @@ export const MOCK_SCENARIO_RESULTS: ImpactItem[] = [
 ];
 
 export const MOCK_RECOMMENDATIONS: Recommendation[] = [
-  { id: 'rec1', text: 'Increase 401k contribution by 2%', checked: false },
-  { id: 'rec2', text: 'Move $5,000 to high-yield savings', checked: true },
+  { id: 'rec1', text: 'Increase 401k contribution by 2% ($768.90)', checked: false },
+  { id: 'rec2', text: 'Move 15% of your balance ($5,766.77) to high-yield savings', checked: true },
   { id: 'rec3', text: 'Delay vacation goal by 6 months', checked: false },
   { id: 'rec4', text: 'Rebalance investment portfolio', checked: false },
   { id: 'rec5', text: 'Consolidate student loans', checked: false },

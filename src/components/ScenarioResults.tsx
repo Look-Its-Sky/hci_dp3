@@ -1,16 +1,18 @@
 import { FC, useState } from 'react';
 import type { Recommendation } from '../types';
 import { MOCK_RECOMMENDATIONS, MOCK_SCENARIO_RESULTS } from '../data';
+import { formatCurrency } from '../utils';
 
 /**
  * Component for the "Scenario Results" screen.
  * This is shown after a scenario is run.
  */
 interface ScenarioResultsProps {
+  totalBalance: number; // The total balance from the previous page
   onRunNew: () => void; // Function to go back to the setup screen
 }
 
-const ScenarioResults: FC<ScenarioResultsProps> = ({ onRunNew }) => {
+const ScenarioResults: FC<ScenarioResultsProps> = ({ totalBalance, onRunNew }) => {
   const [recommendations, setRecommendations] = useState<Recommendation[]>(MOCK_RECOMMENDATIONS);
 
   const handleToggleRecommendation = (id: string) => {
@@ -33,7 +35,9 @@ const ScenarioResults: FC<ScenarioResultsProps> = ({ onRunNew }) => {
                 <span className="impact-item-bullet">•</span>
                 <div className="impact-item-bar-container">
                   {/* --- THIS IS THE LABEL YOU ADDED --- */}
-                  <div className="impact-item-label">{item.name}</div>
+                  <div className="impact-item-label">
+                    {item.name}: {item.value}% ({formatCurrency((totalBalance * item.value) / 100)})
+                  </div>
                   
                   <div className="impact-bar-bg">
                     <div

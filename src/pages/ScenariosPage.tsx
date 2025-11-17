@@ -38,7 +38,10 @@ const ScenariosPage: FC = () => {
           <h2>BALANCE:</h2>
           <p>{formatCurrency(totalBalance)}</p>
         </div>
-        <ScenarioResults onRunNew={() => setHasRunScenario(false)} />
+        <ScenarioResults 
+          totalBalance={totalBalance}
+          onRunNew={() => setHasRunScenario(false)} 
+        />
       </>
     );
   }
