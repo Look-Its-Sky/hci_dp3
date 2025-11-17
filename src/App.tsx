@@ -40,7 +40,10 @@ const App: FC = () => {
       <Header activeLink={currentPage} onNavigate={handleNavigate} />
       
       <main className="app-main">
-        {renderCurrentPage()} {/* Renders the active page */}
+        {/* Add a key to the wrapping div to re-trigger the animation on page change */}
+        <div key={currentPage} className="page-fade-in">
+          {renderCurrentPage()} {/* Renders the active page */}
+        </div>
       </main>
     </div>
   );
