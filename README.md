@@ -1,46 +1,83 @@
-# Getting Started with Create React App
+# Financial Tracker Application
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+This project is a financial tracking and scenario planning application built with React and TypeScript. It allows users to manage their financial goals, view an impact summary of their finances, and run "what-if" scenarios to see potential effects on their financial health.
 
-## Available Scripts
+The application is designed to be a single-page application (SPA) and can be deployed as a web app or as a native mobile app for iOS and Android using Capacitor.
 
-In the project directory, you can run:
+## UI Functionality
 
-### `yarn start`
+The UI is organized into three main pages, accessible via the bottom navigation bar:
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+1.  **MY GOALS**:
+    *   Displays a list of the user's financial goals (e.g., "Car Downpayment", "Student Loan").
+    *   Shows the current progress toward each goal with a progress bar.
+    *   Allows users to add new financial goals via a modal dialog that opens when the "+" button is clicked.
+    *   Users can mark goals as complete and view contribution history for each goal.
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
+2.  **HOME**:
+    *   The main dashboard page, which is the default view when the app starts.
+    *   Displays the user's total balance.
+    *   Features an "Impact Summary" card that visualizes the relative impact of different financial items (e.g., "House Loan", "Utilities") using a bar chart.
 
-### `yarn test`
+3.  **SCENARIOS**:
+    *   Allows users to simulate financial events to see their potential impact.
+    *   Users can select from pre-defined scenarios (e.g., "Market Crash") or saved custom scenarios from a dropdown menu.
+    *   Provides an option to create a new, custom scenario with details like title, cost, and impact period.
+    *   After running a scenario, the UI displays a "Scenario Results" chart and a list of actionable "Recommendations" to help the user adjust their financial plan.
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Requirements & Setup
 
-### `yarn build`
+### Prerequisites
+*   [Node.js](https://nodejs.org/) (v20.x or later recommended)
+*   [Yarn](https://yarnpkg.com/) package manager
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+### Installation
+1.  Clone the repository:
+    ```sh
+    git clone https://github.com/your-username/your-repository-name.git
+    cd your-repository-name
+    ```
+    *(Note: Replace `your-username/your-repository-name` with the actual URL of your repository)*
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+2.  Install the project dependencies:
+    ```sh
+    yarn install
+    ```
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Operating Instructions
 
-### `yarn eject`
+#### Running the UI (Web Browser)
+To run the application in a local development environment:
+```sh
+yarn start
+```
+This will open the application in your default web browser, typically at `http://localhost:3000`. The page will automatically reload if you make any code changes.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+*   **Test Credentials**: No user ID or password is required.
+*   **Browser Settings**: No special browser settings are needed. The application is responsive and should work on modern web browsers like Chrome, Firefox, and Edge.
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+#### Running the UI (Mobile)
+To run the application on a mobile device or simulator, you will need to configure your environment for native iOS or Android development.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
+1.  **Build the web assets:**
+    ```sh
+    yarn build
+    ```
+2.  **Sync the web assets with the native projects:**
+    ```sh
+    npx cap sync
+    ```
+3.  **Run on Android:** (Requires Android Studio)
+    ```sh
+    npx cap run android
+    ```
+4.  **Run on iOS:** (Requires Xcode and a macOS machine)
+    ```sh
+    npx cap run ios
+    ```
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
-
-## Learn More
-
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
-
-To learn React, check out the [React documentation](https://reactjs.org/).
+## Implementation Limitations
+*   **No Backend/Database**: This application is a front-end prototype and does not connect to a real backend or database. All data (goals, scenarios, balances, etc.) is mocked within the [`src/App.tsx`](src/App.tsx) file and will reset on every page refresh.
+*   **Static Calculations**: The financial "scenario running" and "impact summary" are for demonstration purposes only. The results are based on pre-defined mock data and do not perform real-time financial calculations.
+*   **No User Authentication**: There is no login or user account system. The experience is the same for all users and is not persistent.
+*   **Single File Architecture**: For simplicity in this prototype, most of the application's logic, components, and styles are contained within a single file: [`src/App.tsx`](src/App.tsx). In a production-scale application, these would be split into separate files and folders for better organization and maintainability.
