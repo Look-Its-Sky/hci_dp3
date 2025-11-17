@@ -28,8 +28,9 @@ const MyGoalsPage: FC = () => {
     <>
       <div className="title-header">
         <h1>Financial Tracker</h1>
-        <button onClick={() => setShowModal(true)} className="add-goal-btn" aria-label="Add new goal">
+        <button onClick={() => setShowModal(true)} className="add-goal-btn">
           <PlusIcon />
+            <span>Add New Goal</span>
         </button>
       </div>
       <div className="balance-card-gradient">
