@@ -91,22 +91,40 @@ body {
 }
 
 /* --- Add Goal Button (MY GOALS page) --- */
-.add-goal-btn {
+/* .add-goal-btn {
   display: flex;
   align-items: center;
   justify-content: center;
   padding: 0.5rem; /* 8px */
-  background-color: var(--indigo-600);
+  /* background-color: var(--indigo-600);
   color: var(--white);
   border: none;
   border-radius: 9999px; /* full */
-  cursor: pointer;
+  /* cursor: pointer;
   box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
   transition: background-color 0.3s;
 }
 .add-goal-btn:hover {
   background-color: var(--indigo-700);
+} */
+
+.add-goal-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  padding: 0.75rem 1.25rem;
+  background-color: var(--indigo-600);
+  color: var(--white);
+  border: none;
+  border-radius: 0.75rem;
+  font-weight: 500;
 }
+
+.add-goal-btn svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
 
 /* --- Balance Card (MY GOALS page) --- */
 .balance-card-gradient {
