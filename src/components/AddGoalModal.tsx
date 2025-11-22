@@ -44,7 +44,7 @@ const AddGoalModal: FC<AddGoalModalProps> = ({ show, onClose, onAddGoal }) => {
     <>
       <div className="modal-backdrop" onClick={onClose} aria-hidden="true"></div>
       <div className="modal-panel" role="dialog" aria-modal="true" aria-labelledby="modal-title">
-        <h2 id="modal-title">Add New Financial Goal</h2>
+        <h2 id="modal-title">Add New Goal</h2>
         <form onSubmit={handleSubmit} className="modal-form">
           <div className="form-group-container">
             <div className="form-group">

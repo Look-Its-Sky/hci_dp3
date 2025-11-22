@@ -27,15 +27,14 @@ const MyGoalsPage: FC = () => {
   return (
     <>
       <div className="title-header">
-        <h1>Financial Tracker</h1>
+      </div>
+      <div className="balance-card-gradient mt-4">
+        <h2>Total Balance</h2>
+        <p>{formatCurrency(totalBalance)}</p>
         <button onClick={() => setShowModal(true)} className="add-goal-btn">
           <PlusIcon />
             <span>Add New Goal</span>
         </button>
-      </div>
-      <div className="balance-card-gradient">
-        <h2>Total Balance</h2>
-        <p>{formatCurrency(totalBalance)}</p>
       </div>
       <div>
         {goals.map((goal) => (
