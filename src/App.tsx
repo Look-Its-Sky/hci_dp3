@@ -1,27 +1,41 @@
 import React, { useState, FC } from 'react';
+import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
 import type { PageName } from './types';
 import Header from './components/Header';
 import HomePage from './pages/HomePage';
 import MyGoalsPage from './pages/MyGoalsPage';
 import ScenariosPage from './pages/ScenariosPage';
+import LoginPage from './pages/LoginPage';
+import { useAuth } from './contexts/AuthContext';
 
-// --- Main Application Component ---
-/**
- * This is the main "App" component.
- * It controls which page is currently visible.
- */
 const App: FC = () => {
-  // 'HOME' or 'MY GOALS' or 'SCENARIOS'
-  const [currentPage, setCurrentPage] = useState<PageName>('HOME'); // Changed default to show the new page
+  const { isAuthenticated } = useAuth();
+  const location = useLocation();
+
+  return (
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+      <Route
+        path="/*"
+        element={
+          isAuthenticated ? (
+            <MainLayout />
+          ) : (
+            <Navigate to="/login" state={{ from: location }} replace />
+          )
+        }
+      />
+    </Routes>
+  );
+};
+
+const MainLayout: FC = () => {
+  const [currentPage, setCurrentPage] = useState<PageName>('HOME');
 
   const handleNavigate = (page: PageName) => {
     setCurrentPage(page);
   };
 
-  /**
-   * This function renders the correct page based on the
-   * currentPage state.
-   */
   const renderCurrentPage = () => {
     switch (currentPage) {
       case 'HOME':
@@ -38,16 +52,14 @@ const App: FC = () => {
   return (
     <div className="app-container">
       <Header activeLink={currentPage} onNavigate={handleNavigate} />
-      
       <main className="app-main">
-        {/* Add a key to the wrapping div to re-trigger the animation on page change */}
         <div key={currentPage} className="page-fade-in">
-          {renderCurrentPage()} {/* Renders the active page */}
+          {renderCurrentPage()}
         </div>
       </main>
     </div>
   );
-}
+};
 
 export default App;
 
