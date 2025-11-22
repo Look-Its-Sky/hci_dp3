@@ -11,7 +11,6 @@ const HomePage: FC = () => {
   return (
     <>
       <div className="title-header centered">
-        <h1>Financial Tracker</h1>
       </div>
       <div className="balance-card-simple">
         <h2>BALANCE:</h2>

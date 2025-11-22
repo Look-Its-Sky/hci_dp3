@@ -1,26 +1,21 @@
-# Stage 1: Build the React application
-FROM node:20-alpine AS build
+# Builder
+FROM node:24-alpine AS build
 
 WORKDIR /app
 
-# Copy package.json and yarn.lock to leverage Docker cache
 COPY package.json yarn.lock ./
-RUN yarn install
+RUN yarn
 
-# Copy the rest of the application source code
 COPY . .
-
-# Build the application
+RUN rm -rf build
 RUN yarn build
 
-# Stage 2: Serve the application with Nginx
-FROM nginx:alpine
+# Runtime
+FROM node:24-alpine
 
-# Copy the built files from the build stage
-COPY --from=build /app/build /usr/share/nginx/html
+WORKDIR /app
+COPY package.json yarn.lock ./
+RUN yarn install --production
 
-# Expose port 80
-EXPOSE 80
-
-# Start Nginx
-CMD ["nginx", "-g", "daemon off;"]
+COPY --from=build /app/build ./build
+CMD ["yarn", "serve", "-s", "build", "-l", "3000"]
