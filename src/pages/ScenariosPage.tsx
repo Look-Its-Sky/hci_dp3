@@ -1,7 +1,7 @@
 import { FC, useState } from 'react';
 import type { NewScenarioData } from '../types';
 import { formatCurrency } from '../utils';
-import { MOCK_SAVED_SCENARIOS, MOCK_PRESET_SCENARIOS } from '../data';
+import { MOCK_IMPACT_DATA, MOCK_SAVED_SCENARIOS, MOCK_PRESET_SCENARIOS } from '../data';
 import CreateScenarioModal from '../components/CreateScenarioModal';
 import ScenarioResults from '../components/ScenarioResults';
 
@@ -12,7 +12,13 @@ import ScenarioResults from '../components/ScenarioResults';
  * 2. Scenario Results (charts and recommendations)
  */
 const ScenariosPage: FC = () => {
-  const totalBalance = 38445.12;
+  const longTermGoals = MOCK_IMPACT_DATA.filter(item => 
+    ['House Loan', 'Student Loan', 'Car Downpayment', 'Vacation Fund', 'Emergency Fund', 'Investments'].includes(item.name)
+  );
+
+  const totalBalance = longTermGoals.reduce((sum, goal) => {
+    return sum + (goal.currentAmount || 0);
+  }, 0);
   const [savedScenario, setSavedScenario] = useState('');
   const [presetScenario, setPresetScenario] = useState('');
   const [hasRunScenario, setHasRunScenario] = useState(false);
@@ -34,7 +40,7 @@ const ScenariosPage: FC = () => {
         <div className="title-header centered">
         </div>
         <div className="balance-card-simple">
-          <h2>BALANCE:</h2>
+          <h2>EQUITY:</h2>
           <p>{formatCurrency(totalBalance)}</p>
         </div>
         <ScenarioResults 
@@ -51,7 +57,7 @@ const ScenariosPage: FC = () => {
       <div className="title-header centered">
       </div>
       <div className="balance-card-simple">
-        <h2>BALANCE:</h2>
+        <h2>EQUITY:</h2>
         <p>{formatCurrency(totalBalance)}</p>
       </div>
       

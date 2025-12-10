@@ -449,6 +449,12 @@ body {
   overflow: hidden;
   text-overflow: ellipsis;
 }
+.impact-goal-amounts {
+  font-size: 0.75rem;
+  color: var(--gray-500);
+  margin-left: 0.5rem;
+  font-weight: normal;
+}
 .impact-bar-bg {
   width: 100%;
   background-color: var(--gray-200);

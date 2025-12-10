@@ -3,9 +3,9 @@ import type { Goal, ImpactItem, Scenario, Recommendation } from '../types';
 export const INITIAL_GOALS: Goal[] = [
   {
     id: 1,
-    name: "Car Downpayment",
+    name: "Car Down Payment",
     currentAmount: 4332,
-    targetAmount: 4322,
+    targetAmount: 4332,
     completed: true,
     contributions: [
       { id: 'c1', date: '2025-10-15', amount: 1500 },
@@ -17,7 +17,7 @@ export const INITIAL_GOALS: Goal[] = [
     id: 2,
     name: "House Loan",
     currentAmount: 31000,
-    targetAmount: 1000000,
+    targetAmount: 500000,
     completed: false,
     contributions: [
       { id: 'c4', date: '2025-10-01', amount: 10000 },
@@ -38,15 +38,15 @@ export const INITIAL_GOALS: Goal[] = [
 ];
 
 export const MOCK_IMPACT_DATA: ImpactItem[] = [
-  { id: 'i1', name: 'House Loan', value: 90 },
-  { id: 'i2', name: 'Student Loan', value: 65 },
-  { id: 'i3', name: 'Car Downpayment', value: 70 },
-  { id: 'i4', name: 'Utilities', value: 85 },
-  { id: 'i5', name: 'Groceries', value: 68 },
-  { id: 'i6', name: 'Subscriptions', value: 72 },
-  { id: 'i7', name: 'Vacation Fund', value: 95 },
-  { id: 'i8', name: 'Emergency Fund', value: 65 },
-  { id: 'i9', name: 'Investments', value: 50 },
+  { id: 'i1', name: 'House Loan', value: (31000 / 500000) * 100, currentAmount: 31000, targetAmount: 500000 },
+  { id: 'i2', name: 'Student Loan', value: (45000 / 50000) * 100, currentAmount: 45000, targetAmount: 50000 },
+  { id: 'i3', name: 'Car Down Payment', value: (4332 / 4332) * 100, currentAmount: 4332, targetAmount: 4332 },
+  { id: 'i4', name: 'Utilities', value: (170 / 200) * 100, currentAmount: 170, targetAmount: 200 },
+  { id: 'i5', name: 'Groceries', value: (425 / 500) * 100, currentAmount: 425, targetAmount: 500 },
+  { id: 'i6', name: 'Subscriptions', value: (25.2 / 35) * 100, currentAmount: 25.2, targetAmount: 35 },
+  { id: 'i7', name: 'Vacation Fund', value: (5700 / 6000) * 100, currentAmount: 5700, targetAmount: 6000 },
+  { id: 'i8', name: 'Emergency Fund', value: (9750 / 15000) * 100, currentAmount: 9750, targetAmount: 15000 },
+  { id: 'i9', name: 'Investments', value: (5000 / 10000) * 100, currentAmount: 5000, targetAmount: 10000 },
 ];
 
 export const MOCK_SAVED_SCENARIOS: Scenario[] = [

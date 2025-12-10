@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
 import type { Goal } from '../types';
-import { INITIAL_GOALS } from '../data';
+import { INITIAL_GOALS, MOCK_IMPACT_DATA } from '../data';
 import { formatCurrency } from '../utils';
 import PlusIcon from '../assets/icons/PlusIcon';
 import GoalItem from '../components/GoalItem';
@@ -12,7 +12,13 @@ import AddGoalModal from '../components/AddGoalModal';
 const MyGoalsPage: FC = () => {
   const [goals, setGoals] = useState<Goal[]>(INITIAL_GOALS);
   const [showModal, setShowModal] = useState(false);
-  const totalBalance = 38445.12; // This seems to be static in the wireframes
+  const longTermGoals = MOCK_IMPACT_DATA.filter(item => 
+    ['House Loan', 'Student Loan', 'Car Downpayment', 'Vacation Fund', 'Emergency Fund', 'Investments'].includes(item.name)
+  );
+
+  const totalBalance = longTermGoals.reduce((sum, goal) => {
+    return sum + (goal.currentAmount || 0);
+  }, 0);
 
   const handleToggleComplete = (id: number | string) => {
     setGoals(goals.map(goal =>
@@ -29,7 +35,7 @@ const MyGoalsPage: FC = () => {
       <div className="title-header">
       </div>
       <div className="balance-card-gradient mt-4">
-        <h2>Total Balance</h2>
+        <h2>EQUITY:</h2>
         <p>{formatCurrency(totalBalance)}</p>
         <button onClick={() => setShowModal(true)} className="add-goal-btn">
           <PlusIcon />
