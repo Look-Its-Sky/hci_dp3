@@ -1,4 +1,59 @@
-import type { Goal, ImpactItem, Scenario, Recommendation } from '../types';
+import type { Goal, ImpactItem, Scenario, Recommendation, UserFinancialProfile } from '../types';
+
+export const MOCK_USER_PROFILE: UserFinancialProfile = {
+  id: 'user-001',
+  name: 'Alex Johnson',
+  email: 'alex.johnson@email.com',
+  createdAt: '2024-03-15',
+  accounts: {
+    checking: {
+      id: 'acc-001',
+      name: 'Primary Checking',
+      balance: 8450.32,
+      institution: 'Chase Bank',
+      lastUpdated: '2025-12-10'
+    },
+    savings: {
+      id: 'acc-002',
+      name: 'High-Yield Savings',
+      balance: 24680.00,
+      interestRate: 4.5,
+      institution: 'Marcus by Goldman Sachs',
+      lastUpdated: '2025-12-10'
+    },
+    investment: {
+      id: 'acc-003',
+      name: 'Brokerage Account',
+      balance: 45230.88,
+      ytdReturn: 12.4,
+      institution: 'Fidelity',
+      lastUpdated: '2025-12-10'
+    },
+    retirement: {
+      id: 'acc-004',
+      name: '401(k)',
+      balance: 67890.50,
+      ytdContribution: 15600,
+      employerMatch: 4800,
+      institution: 'Vanguard',
+      lastUpdated: '2025-12-10'
+    }
+  },
+  monthlyIncome: 7500,
+  monthlyExpenses: {
+    housing: 2100,
+    utilities: 170,
+    groceries: 425,
+    transportation: 380,
+    subscriptions: 25.20,
+    insurance: 245,
+    dining: 320,
+    entertainment: 180,
+    other: 420
+  },
+  creditScore: 742,
+  riskTolerance: 'moderate'
+};
 
 export const INITIAL_GOALS: Goal[] = [
   {
@@ -50,15 +105,17 @@ export const MOCK_IMPACT_DATA: ImpactItem[] = [
 ];
 
 export const MOCK_SAVED_SCENARIOS: Scenario[] = [
-  { id: 's1', name: 'Aggressive Savings Plan' },
-  { id: 's2', name: 'Early Retirement Study' },
-  { id: 's3', name: 'New House Purchase' },
+  { id: 's1', name: 'Aggressive Savings Plan', description: 'Increase monthly savings by cutting discretionary spending', category: 'savings' },
+  { id: 's2', name: 'Early Retirement Study', description: 'Analyze path to retire 5 years early', category: 'investment' },
+  { id: 's3', name: 'New House Purchase', description: 'Impact of purchasing a $450k home', category: 'expense' },
 ];
 
 export const MOCK_PRESET_SCENARIOS: Scenario[] = [
-  { id: 'p1', name: 'Market Crash (30%)' },
-  { id: 'p2', name: 'High Inflation (10%)' },
-  { id: 'p3', name: 'Windfall (10k)' },
+  { id: 'p1', name: 'Market Crash (30%)', description: 'Simulate a 30% market downturn on investments', category: 'emergency' },
+  { id: 'p2', name: 'High Inflation (10%)', description: 'Impact of sustained 10% inflation', category: 'emergency' },
+  { id: 'p3', name: 'Windfall (10k)', description: 'Unexpected $10,000 bonus or inheritance', category: 'investment' },
+  { id: 'p4', name: 'Job Loss (6 months)', description: 'Losing income for 6 months', category: 'emergency' },
+  { id: 'p5', name: 'Medical Emergency ($15k)', description: 'Unexpected medical expense', category: 'emergency' },
 ];
 
 export const MOCK_SCENARIO_RESULTS: ImpactItem[] = [
@@ -68,9 +125,28 @@ export const MOCK_SCENARIO_RESULTS: ImpactItem[] = [
 ];
 
 export const MOCK_RECOMMENDATIONS: Recommendation[] = [
-  { id: 'rec1', text: 'Increase 401k contribution by 2% ($768.90)', checked: false },
-  { id: 'rec2', text: 'Move 15% of your balance ($5,766.77) to high-yield savings', checked: true },
-  { id: 'rec3', text: 'Delay vacation goal by 6 months', checked: false },
-  { id: 'rec4', text: 'Rebalance investment portfolio', checked: false },
-  { id: 'rec5', text: 'Consolidate student loans', checked: false },
+  { id: 'rec1', text: 'Increase 401k contribution by 2% ($768.90/month)', checked: false, impact: 9227, priority: 'high' },
+  { id: 'rec2', text: 'Move 15% of balance ($5,766.77) to high-yield savings', checked: true, impact: 259, priority: 'medium' },
+  { id: 'rec3', text: 'Delay vacation goal by 6 months', checked: false, impact: 3600, priority: 'low' },
+  { id: 'rec4', text: 'Rebalance investment portfolio to match risk tolerance', checked: false, impact: 2100, priority: 'medium' },
+  { id: 'rec5', text: 'Consolidate student loans for lower interest rate', checked: false, impact: 4200, priority: 'high' },
 ];
+
+// Helper function to calculate total net worth
+export const calculateNetWorth = (): number => {
+  const accounts = MOCK_USER_PROFILE.accounts;
+  return accounts.checking.balance + accounts.savings.balance + 
+         accounts.investment.balance + accounts.retirement.balance;
+};
+
+// Helper function to calculate monthly savings potential
+export const calculateMonthlySavings = (): number => {
+  const totalExpenses = Object.values(MOCK_USER_PROFILE.monthlyExpenses).reduce((a, b) => a + b, 0);
+  return MOCK_USER_PROFILE.monthlyIncome - totalExpenses;
+};
+
+// Helper function to calculate savings rate
+export const calculateSavingsRate = (): number => {
+  const savings = calculateMonthlySavings();
+  return (savings / MOCK_USER_PROFILE.monthlyIncome) * 100;
+};
