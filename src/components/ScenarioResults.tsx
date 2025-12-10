@@ -1,6 +1,6 @@
 import { FC, useState } from 'react';
-import type { Recommendation } from '../types';
-import { MOCK_RECOMMENDATIONS, MOCK_SCENARIO_RESULTS } from '../data';
+import type { Recommendation, NewScenarioData } from '../types';
+import { MOCK_RECOMMENDATIONS } from '../data';
 import { formatCurrency } from '../utils';
 
 /**
@@ -9,10 +9,11 @@ import { formatCurrency } from '../utils';
  */
 interface ScenarioResultsProps {
   totalBalance: number; // The total balance from the previous page
+  activeScenario: NewScenarioData;
   onRunNew: () => void; // Function to go back to the setup screen
 }
 
-const ScenarioResults: FC<ScenarioResultsProps> = ({ totalBalance, onRunNew }) => {
+const ScenarioResults: FC<ScenarioResultsProps> = ({ totalBalance, activeScenario, onRunNew }) => {
   const [recommendations, setRecommendations] = useState<Recommendation[]>(MOCK_RECOMMENDATIONS);
 
   const handleToggleRecommendation = (id: string) => {
@@ -23,27 +24,57 @@ const ScenarioResults: FC<ScenarioResultsProps> = ({ totalBalance, onRunNew }) =
     );
   };
 
+  // Calculate results based on activeScenario
+  const scenarioCost = activeScenario.totalCost;
+  const projectedBalance = totalBalance - scenarioCost;
+  
+  // Determine max value for bar scaling (avoid divide by zero)
+  const maxVal = Math.max(totalBalance, projectedBalance, Math.abs(scenarioCost)) || 1;
+
+  const results = [
+    {
+      id: 'current',
+      name: 'Current Equity',
+      amount: totalBalance,
+      value: (totalBalance / maxVal) * 100,
+      colorIndex: 1
+    },
+    {
+      id: 'cost',
+      name: 'Scenario Impact', // Could be cost or gain
+      amount: scenarioCost, 
+      value: (Math.abs(scenarioCost) / maxVal) * 100,
+      colorIndex: 2
+    },
+    {
+      id: 'projected',
+      name: 'Projected Equity',
+      amount: projectedBalance,
+      value: (projectedBalance / maxVal) * 100,
+      colorIndex: 3
+    }
+  ];
+
   return (
     <>
       {/* Scenario Results Chart (re-using impact-card styles) */}
       <div className="impact-card">
-        <h3>Scenario Results:</h3>
+        <h3>Scenario Results: {activeScenario.title}</h3>
         <div className="impact-list-container" style={{ maxHeight: '150px' }}>
           <ul className="impact-list">
-            {MOCK_SCENARIO_RESULTS.map((item, index) => (
+            {results.map((item) => (
               <li key={item.id} className="impact-item">
                 <span className="impact-item-bullet">•</span>
                 <div className="impact-item-bar-container">
-                  {/* --- THIS IS THE LABEL YOU ADDED --- */}
                   <div className="impact-item-label">
-                    {item.name}: {item.value}% ({formatCurrency((totalBalance * item.value) / 100)})
+                    {item.name}: {formatCurrency(item.amount)}
                   </div>
                   
                   <div className="impact-bar-bg">
                     <div
-                      className={`impact-bar-inner color-${(index % 5) + 1}`}
-                      style={{ width: `${item.value}%` }}
-                      title={`${item.name}: ${item.value}%`}
+                      className={`impact-bar-inner color-${item.colorIndex}`}
+                      style={{ width: `${Math.max(item.value, 0)}%` }} // Ensure non-negative
+                      title={`${item.name}: ${formatCurrency(item.amount)}`}
                     ></div>
                   </div>
                 </div>

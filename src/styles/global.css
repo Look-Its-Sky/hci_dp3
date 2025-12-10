@@ -172,29 +172,78 @@ body {
 /* --- Goal Item (MY GOALS page) --- */
 .goal-item {
   background-color: var(--white);
-  padding: 1.5rem;
-  border-radius: 0.75rem; /* 12px */
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  margin-bottom: 1rem; /* 16px */
-  transition: all 0.3s;
+  padding: 1.75rem; /* Increased padding */
+  border-radius: 1rem; /* 16px */
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05), 0 2px 4px -1px rgba(0, 0, 0, 0.03);
+  margin-bottom: 1.25rem; /* 20px */
+  transition: all 0.3s ease;
+  border: 1px solid var(--gray-100);
 }
+.goal-item:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+}
+
 .goal-item-header {
   display: flex;
   align-items: center;
 }
-.goal-item-header input[type="checkbox"] {
-  height: 1.5rem; /* 24px */
-  width: 1.5rem; /* 24px */
-  color: var(--indigo-600);
-  border-color: var(--gray-300);
-  border-radius: 0.25rem;
+
+/* Custom Checkbox Styling */
+.custom-checkbox-container {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
   cursor: pointer;
 }
+
+.custom-checkbox-input {
+  position: absolute;
+  opacity: 0;
+  width: 0;
+  height: 0;
+  cursor: pointer;
+}
+
+.custom-checkbox-styled {
+  height: 1.5rem; /* 24px */
+  width: 1.5rem; /* 24px */
+  border: 2px solid var(--gray-300);
+  background-color: var(--white);
+  border-radius: 0.375rem; /* 6px */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease-in-out;
+}
+
+.custom-checkbox-input:checked + .custom-checkbox-styled {
+  background-color: var(--indigo-600);
+  border-color: var(--indigo-600);
+}
+
+.custom-checkbox-input:focus + .custom-checkbox-styled {
+  box-shadow: 0 0 0 2px var(--indigo-100), 0 0 0 4px var(--indigo-500);
+}
+
+.custom-checkbox-styled svg {
+  width: 1rem; /* 16px */
+  height: 1rem; /* 16px */
+  color: var(--white);
+  transform: scale(0);
+  transition: transform 0.2s ease-in-out;
+}
+
+.custom-checkbox-input:checked + .custom-checkbox-styled svg {
+  transform: scale(1);
+}
+
 .goal-item-header h2 {
   font-size: 1.25rem; /* 20px */
-  font-weight: 600;
+  font-weight: 700;
   margin: 0 0 0 1rem; /* 16px */
   color: var(--gray-800);
+  transition: color 0.3s;
 }
 .goal-item-header h2.completed {
   color: var(--gray-400);
@@ -207,16 +256,17 @@ body {
   display: flex;
   justify-content: space-between;
   font-size: 0.875rem; /* 14px */
-  font-weight: 500;
+  font-weight: 600;
   color: var(--gray-600);
-  margin-bottom: 0.25rem; /* 4px */
+  margin-bottom: 0.5rem; /* 8px */
 }
 .goal-progress-text span:last-child {
   color: var(--gray-500);
+  font-weight: 500;
 }
 .progress-bar-bg {
   width: 100%;
-  background-color: var(--gray-200);
+  background-color: var(--gray-100);
   border-radius: 9999px;
   height: 0.75rem; /* 12px */
   overflow: hidden;
@@ -225,7 +275,7 @@ body {
   height: 0.75rem;
   border-radius: 9999px;
   background-color: var(--indigo-600);
-  transition: all 0.5s;
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
 }
 .progress-bar-inner.completed {
   background-color: var(--green-500);
@@ -240,28 +290,31 @@ body {
   justify-content: flex-end;
   width: 100%;
   font-size: 0.875rem; /* 14px */
-  font-weight: 500;
+  font-weight: 600;
   color: var(--indigo-600);
   background: none;
   border: none;
   cursor: pointer;
+  transition: color 0.2s;
 }
 .contributions-toggle button:hover {
-  color: var(--indigo-700);
+  color: var(--indigo-800);
 }
 .contributions-toggle .rotate-180 {
   transform: rotate(180deg);
 }
 .contributions-list {
   margin-top: 1rem; /* 16px */
-  padding-top: 1rem; /* 16px */
-  border-top: 1px solid var(--gray-200);
+  padding-top: 1.25rem; /* 20px */
+  border-top: 1px solid var(--gray-100);
 }
 .contributions-list h4 {
   font-size: 0.875rem; /* 14px */
   font-weight: 600;
   color: var(--gray-700);
-  margin: 0 0 0.75rem 0;
+  margin: 0 0 1rem 0;
+  text-transform: uppercase;
+  letter-spacing: 0.025em;
 }
 .contributions-list ul {
   list-style: none;
@@ -269,13 +322,16 @@ body {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 0.5rem; /* 8px */
+  gap: 0.75rem; /* 12px */
 }
 .contributions-list li {
   display: flex;
   justify-content: space-between;
   font-size: 0.875rem;
   color: var(--gray-600);
+  padding: 0.5rem;
+  background-color: var(--gray-50);
+  border-radius: 0.5rem;
 }
 .contributions-list li span:last-child {
   font-weight: 500;
