@@ -1,6 +1,5 @@
 import type { Goal, ImpactItem, Scenario, Recommendation, UserFinancialProfile } from '../types';
 
-// Mock user financial profile - simulates bank account and personal data
 export const MOCK_USER_PROFILE: UserFinancialProfile = {
   id: 'user-001',
   name: 'Alex Johnson',

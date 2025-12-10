@@ -5,7 +5,7 @@ import { formatCurrency } from '../utils';
 
 /**
  * Component for the "Scenario Results" screen.
- * This is shown after a scenario is run with before/after comparison.
+ * This is shown after a scenario is run.
  */
 interface ScenarioResultsProps {
   totalBalance: number;

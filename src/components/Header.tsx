@@ -2,7 +2,7 @@ import { FC } from 'react';
 import type { PageName } from '../types';
 
 /**
- * Header Navigation Bar with enhanced visual feedback
+ * Header Navigation Bar
  */
 interface HeaderProps {
   activeLink: PageName;

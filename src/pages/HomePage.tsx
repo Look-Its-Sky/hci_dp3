@@ -3,7 +3,7 @@ import { formatCurrency } from '../utils';
 import { MOCK_IMPACT_DATA, MOCK_USER_PROFILE, calculateNetWorth, calculateMonthlySavings, calculateSavingsRate } from '../data';
 
 /**
- * Component for the "HOME" page content - Financial Dashboard
+ * Component for the "HOME" page content
  */
 const HomePage: FC = () => {
   const longTermGoals = MOCK_IMPACT_DATA.filter(item => 
