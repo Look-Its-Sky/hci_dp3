@@ -2,6 +2,7 @@ import { FC, useState } from 'react';
 import type { Goal } from '../types';
 import { formatCurrency } from '../utils';
 import ChevronDownIcon from '../assets/icons/ChevronDownIcon';
+import CheckIcon from '../assets/icons/CheckIcon';
 
 const GoalItem: FC<{ goal: Goal, onToggleComplete: (id: number | string) => void }> = ({ goal, onToggleComplete }) => {
   const [showContributions, setShowContributions] = useState(false);
@@ -10,12 +11,18 @@ const GoalItem: FC<{ goal: Goal, onToggleComplete: (id: number | string) => void
   return (
     <div className="goal-item">
       <div className="goal-item-header">
-        <input
-          type="checkbox"
-          checked={goal.completed}
-          onChange={() => onToggleComplete(goal.id)}
-          aria-label={`Mark ${goal.name} as complete`}
-        />
+        <label className="custom-checkbox-container">
+          <input
+            type="checkbox"
+            className="custom-checkbox-input"
+            checked={goal.completed}
+            onChange={() => onToggleComplete(goal.id)}
+            aria-label={`Mark ${goal.name} as complete`}
+          />
+          <span className="custom-checkbox-styled">
+            <CheckIcon />
+          </span>
+        </label>
         <h2 className={goal.completed ? 'completed' : ''}>
           {goal.name}
         </h2>

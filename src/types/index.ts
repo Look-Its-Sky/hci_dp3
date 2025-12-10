@@ -18,6 +18,8 @@ export interface ImpactItem {
   id: string;
   name: string;
   value: number; // Represents a value 0-100 for the bar width
+  currentAmount?: number;
+  targetAmount?: number;
 }
 
 export interface Scenario {
