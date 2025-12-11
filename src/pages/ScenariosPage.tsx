@@ -1,9 +1,10 @@
 import { FC, useState, useMemo } from 'react';
-import type { NewScenarioData, Scenario } from '../types';
+import type { NewScenarioData, Scenario, Recommendation } from '../types';
 import { formatCurrency } from '../utils';
 import { MOCK_IMPACT_DATA, MOCK_SAVED_SCENARIOS, MOCK_PRESET_SCENARIOS, MOCK_USER_PROFILE, calculateNetWorth, calculateMonthlySavings } from '../data';
 import CreateScenarioModal from '../components/CreateScenarioModal';
 import ScenarioResults from '../components/ScenarioResults';
+import { analyzeScenario } from '../services/scenarioService';
 
 const MOCK_SCENARIO_DETAILS: Record<string, NewScenarioData> = {
   's1': { title: 'Aggressive Savings Plan', impactPeriod: 'recurring', totalCost: -5000, costEachPeriod: -1000, periodUnit: 'month' },
@@ -36,6 +37,9 @@ const ScenariosPage: FC = () => {
   const [activeScenario, setActiveScenario] = useState<NewScenarioData | null>(null);
   const [savedResults, setSavedResults] = useState<NewScenarioData[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
+  
+  const [isLoading, setIsLoading] = useState(false);
+  const [aiRecommendations, setAiRecommendations] = useState<Recommendation[] | undefined>(undefined);
 
   // Get selected scenario details for preview
   const selectedScenarioDetails = useMemo(() => {
@@ -55,19 +59,61 @@ const ScenariosPage: FC = () => {
   }, [selectedCategory]);
 
   // Handler for running a newly created scenario
-  const handleCreateScenario = (data: NewScenarioData) => {
+  const handleCreateScenario = async (data: NewScenarioData) => {
     console.log("Running new scenario with data:", data);
+    
+    setIsLoading(true);
+    try {
+      // Even for custom scenarios, we can ask AI for recommendations
+      const { recommendations } = await analyzeScenario(
+        data.title,
+        "User created custom scenario with specific costs.",
+        MOCK_USER_PROFILE
+      );
+      setAiRecommendations(recommendations);
+    } catch (error) {
+      console.error("AI Analysis failed", error);
+      setAiRecommendations(undefined); // Fallback to default
+    } finally {
+      setIsLoading(false);
+    }
+  
+
     setActiveScenario(data);
     setSavedResults(prev => [...prev, data]);
     setShowCreateModal(false);
     setHasRunScenario(true);
   };
 
-  const handleRunSelectedScenario = () => {
+  const handleRunSelectedScenario = async () => {
     let scenarioData: NewScenarioData | null = null;
+    const basicInfo = [...MOCK_SAVED_SCENARIOS, ...MOCK_PRESET_SCENARIOS].find(s => s.id === selectedScenarioId);
 
-    if (selectedScenarioId && MOCK_SCENARIO_DETAILS[selectedScenarioId]) {
+    // Try AI first if key exists
+    setIsLoading(true);
+    if (basicInfo) { // Add this check
+      try {
+        const result = await analyzeScenario(
+          basicInfo.name,
+          basicInfo.description || "",
+          MOCK_USER_PROFILE
+        );
+        scenarioData = result.scenarioData;
+        setAiRecommendations(result.recommendations);
+      } catch (error) {
+        console.error("AI Analysis failed, falling back to mock", error);
+      } finally {
+        setIsLoading(false);
+      }
+    } else { // Handle case where basicInfo is undefined if no matching scenario is found
+        setIsLoading(false); // Make sure loading state is cleared
+    }
+    
+
+    // Fallback if AI failed or no key, or if we haven't set scenarioData yet
+    if (!scenarioData && selectedScenarioId && MOCK_SCENARIO_DETAILS[selectedScenarioId]) {
       scenarioData = MOCK_SCENARIO_DETAILS[selectedScenarioId];
+      setAiRecommendations(undefined); // Clear any stale recommendations
     }
 
     if (scenarioData) {
@@ -80,6 +126,16 @@ const ScenariosPage: FC = () => {
     setActiveScenario(adjustedScenario);
   };
 
+  if (isLoading) {
+    return (
+      <div className="scenario-loading">
+        <div className="loading-spinner"></div>
+        <h3>Analyzing Financial Impact...</h3>
+        <p>Our AI advisor is crunching the numbers for you.</p>
+      </div>
+    );
+  }
+
   // Show the Results page
   if (hasRunScenario && activeScenario) {
     return (
@@ -89,10 +145,12 @@ const ScenariosPage: FC = () => {
           monthlySavings={monthlySavings}
           userProfile={MOCK_USER_PROFILE}
           activeScenario={activeScenario}
+          initialRecommendations={aiRecommendations}
           onRunNew={() => {
             setHasRunScenario(false);
             setActiveScenario(null);
             setSelectedScenarioId('');
+            setAiRecommendations(undefined);
           }}
           onAdjustScenario={handleAdjustAndRerun}
         />

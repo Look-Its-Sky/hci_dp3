@@ -14,6 +14,7 @@ interface ScenarioResultsProps {
   activeScenario: NewScenarioData;
   onRunNew: () => void;
   onAdjustScenario: (adjusted: NewScenarioData) => void;
+  initialRecommendations?: Recommendation[];
 }
 
 const ScenarioResults: FC<ScenarioResultsProps> = ({ 
@@ -22,9 +23,10 @@ const ScenarioResults: FC<ScenarioResultsProps> = ({
   userProfile,
   activeScenario, 
   onRunNew,
-  onAdjustScenario 
+  onAdjustScenario,
+  initialRecommendations
 }) => {
-  const [recommendations, setRecommendations] = useState<Recommendation[]>(MOCK_RECOMMENDATIONS);
+  const [recommendations, setRecommendations] = useState<Recommendation[]>(initialRecommendations || MOCK_RECOMMENDATIONS);
   const [showAdjustPanel, setShowAdjustPanel] = useState(false);
   const [adjustedCost, setAdjustedCost] = useState(activeScenario.totalCost.toString());
 

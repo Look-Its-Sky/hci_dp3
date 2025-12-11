@@ -34,7 +34,7 @@ export interface Recommendation {
   text: string;
   checked: boolean;
   impact?: number; // Estimated impact amount
-  priority?: 'high' | 'medium' | 'low';
+  priority: 'high' | 'medium' | 'low' | string;
 }
 
 // New type for the create scenario form data
