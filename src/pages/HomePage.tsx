@@ -1,31 +1,28 @@
 import { FC } from 'react';
 import { formatCurrency } from '../utils';
-import { MOCK_IMPACT_DATA, MOCK_USER_PROFILE, calculateNetWorth, calculateMonthlySavings, calculateSavingsRate } from '../data';
+import { MOCK_IMPACT_DATA, calculateNetWorthForUser, calculateMonthlySavingsForUser, calculateSavingsRateForUser, USER_PROFILES } from '../data';
+import { useAuth } from '../contexts/AuthContext';
 
-/**
- * Component for the "HOME" page content
- */
 const HomePage: FC = () => {
-  const longTermGoals = MOCK_IMPACT_DATA.filter(item => 
+  const { currentUser } = useAuth();
+  const userProfile = currentUser || USER_PROFILES['user-001'];
+
+  const longTermGoals = userProfile.goals || MOCK_IMPACT_DATA.filter(item => 
     ['House Loan', 'Student Loan', 'Car Down Payment', 'Vacation Fund', 'Emergency Fund', 'Investments'].includes(item.name)
   );
 
-  const totalBalance = longTermGoals.reduce((sum, goal) => {
-    return sum + (goal.currentAmount || 0);
-  }, 0);
+  const longTermGoalsWithProgress = longTermGoals.map(goal => ({
+    ...goal,
+    value: ((goal.currentAmount || 0) / (goal.targetAmount || 1)) * 100
+  }));
 
-  const monthlyExpenses = MOCK_IMPACT_DATA.filter(item =>
-    ['Utilities', 'Groceries', 'Subscriptions'].includes(item.name)
-  );
+  const netWorth = calculateNetWorthForUser(userProfile);
+  const monthlySavings = calculateMonthlySavingsForUser(userProfile);
+  const savingsRate = calculateSavingsRateForUser(userProfile);
+  const totalMonthlyExpenses = Object.values(userProfile.monthlyExpenses).reduce((a, b) => a + b, 0);
 
-  const netWorth = calculateNetWorth();
-  const monthlySavings = calculateMonthlySavings();
-  const savingsRate = calculateSavingsRate();
-  const totalMonthlyExpenses = Object.values(MOCK_USER_PROFILE.monthlyExpenses).reduce((a, b) => a + b, 0);
-
-  // Calculate health metrics
-  const emergencyFundMonths = MOCK_USER_PROFILE.accounts.savings.balance / totalMonthlyExpenses;
-  const debtToIncomeRatio = (totalMonthlyExpenses / MOCK_USER_PROFILE.monthlyIncome) * 100;
+  const emergencyFundMonths = userProfile.accounts.savings.balance / totalMonthlyExpenses;
+  const debtToIncomeRatio = (totalMonthlyExpenses / userProfile.monthlyIncome) * 100;
 
   return (
     <>
@@ -33,10 +30,10 @@ const HomePage: FC = () => {
       <div className="welcome-banner">
         <div className="welcome-text">
           <span className="welcome-label">Welcome back,</span>
-          <span className="welcome-name">{MOCK_USER_PROFILE.name}</span>
+          <span className="welcome-name">{userProfile.name}</span>
         </div>
         <div className="last-updated">
-          Last synced: {MOCK_USER_PROFILE.accounts.checking.lastUpdated}
+          Last synced: {userProfile.accounts.checking.lastUpdated}
         </div>
       </div>
 
@@ -53,19 +50,19 @@ const HomePage: FC = () => {
         <div className="equity-breakdown">
           <div className="breakdown-item">
             <span className="breakdown-label">Checking</span>
-            <span className="breakdown-value">{formatCurrency(MOCK_USER_PROFILE.accounts.checking.balance)}</span>
+            <span className="breakdown-value">{formatCurrency(userProfile.accounts.checking.balance)}</span>
           </div>
           <div className="breakdown-item">
             <span className="breakdown-label">Savings</span>
-            <span className="breakdown-value">{formatCurrency(MOCK_USER_PROFILE.accounts.savings.balance)}</span>
+            <span className="breakdown-value">{formatCurrency(userProfile.accounts.savings.balance)}</span>
           </div>
           <div className="breakdown-item">
             <span className="breakdown-label">Investments</span>
-            <span className="breakdown-value">{formatCurrency(MOCK_USER_PROFILE.accounts.investment.balance)}</span>
+            <span className="breakdown-value">{formatCurrency(userProfile.accounts.investment.balance)}</span>
           </div>
           <div className="breakdown-item">
             <span className="breakdown-label">Retirement</span>
-            <span className="breakdown-value">{formatCurrency(MOCK_USER_PROFILE.accounts.retirement.balance)}</span>
+            <span className="breakdown-value">{formatCurrency(userProfile.accounts.retirement.balance)}</span>
           </div>
         </div>
       </div>
@@ -102,15 +99,15 @@ const HomePage: FC = () => {
         <div className="metric-card">
           <div className="metric-icon score-icon">📊</div>
           <div className="metric-content">
-            <span className="metric-value">{MOCK_USER_PROFILE.creditScore}</span>
+            <span className="metric-value">{userProfile.creditScore}</span>
             <span className="metric-label">Credit Score</span>
             <div className="metric-bar-container">
               <div 
-                className={`metric-bar ${MOCK_USER_PROFILE.creditScore >= 740 ? 'excellent' : MOCK_USER_PROFILE.creditScore >= 670 ? 'good' : 'fair'}`}
-                style={{ width: `${((MOCK_USER_PROFILE.creditScore - 300) / 550) * 100}%` }}
+                className={`metric-bar ${userProfile.creditScore >= 740 ? 'excellent' : userProfile.creditScore >= 670 ? 'good' : 'fair'}`}
+                style={{ width: `${((userProfile.creditScore - 300) / 550) * 100}%` }}
               ></div>
             </div>
-            <span className="metric-detail">{MOCK_USER_PROFILE.creditScore >= 740 ? 'Excellent' : MOCK_USER_PROFILE.creditScore >= 670 ? 'Good' : 'Fair'}</span>
+            <span className="metric-detail">{userProfile.creditScore >= 740 ? 'Excellent' : userProfile.creditScore >= 670 ? 'Good' : 'Fair'}</span>
           </div>
         </div>
 
@@ -134,11 +131,11 @@ const HomePage: FC = () => {
       <div className="impact-card" style={{ marginBottom: '1rem' }}>
         <div className="card-header-with-action">
           <h3>Long Term Goals</h3>
-          <span className="card-subtitle">{longTermGoals.length} active goals</span>
+          <span className="card-subtitle">{longTermGoalsWithProgress.length} active goals</span>
         </div>
         <div className="impact-list-container">
           <ul className="impact-list">
-            {longTermGoals.map((item, index) => {
+            {longTermGoalsWithProgress.map((item, index) => {
               const progressPercent = item.value;
               const remaining = (item.targetAmount || 0) - (item.currentAmount || 0);
               return (
@@ -177,7 +174,7 @@ const HomePage: FC = () => {
       <div className="impact-card">
         <div className="card-header-with-action">
           <h3>Monthly Budget</h3>
-          <span className="card-subtitle">Income: {formatCurrency(MOCK_USER_PROFILE.monthlyIncome)}</span>
+          <span className="card-subtitle">Income: {formatCurrency(userProfile.monthlyIncome)}</span>
         </div>
         <div className="budget-overview">
           <div className="budget-summary">
@@ -193,8 +190,8 @@ const HomePage: FC = () => {
         </div>
         <div className="impact-list-container">
           <ul className="impact-list">
-            {Object.entries(MOCK_USER_PROFILE.monthlyExpenses).map(([key, value], index) => {
-              const percentage = (value / MOCK_USER_PROFILE.monthlyIncome) * 100;
+            {Object.entries(userProfile.monthlyExpenses).map(([key, value], index) => {
+              const percentage = (value / userProfile.monthlyIncome) * 100;
               const label = key.charAt(0).toUpperCase() + key.slice(1);
               return (
                 <li key={key} className="impact-item enhanced">

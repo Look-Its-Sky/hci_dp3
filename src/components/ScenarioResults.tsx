@@ -1,12 +1,8 @@
-import { FC, useState, useMemo } from 'react';
-import type { Recommendation, NewScenarioData, UserFinancialProfile } from '../types';
-import { MOCK_RECOMMENDATIONS } from '../data';
+import { FC, useState, useMemo, useEffect } from 'react';
+import type { Recommendation, NewScenarioData, UserFinancialProfile, SavedScenarioResult } from '../types';
+import { generateRecommendations } from '../data';
 import { formatCurrency } from '../utils';
 
-/**
- * Component for the "Scenario Results" screen.
- * This is shown after a scenario is run.
- */
 interface ScenarioResultsProps {
   totalBalance: number;
   monthlySavings: number;
@@ -14,6 +10,8 @@ interface ScenarioResultsProps {
   activeScenario: NewScenarioData;
   onRunNew: () => void;
   onAdjustScenario: (adjusted: NewScenarioData) => void;
+  onSaveResult?: (result: SavedScenarioResult) => void;
+  savedResults?: SavedScenarioResult[];
 }
 
 const ScenarioResults: FC<ScenarioResultsProps> = ({ 
@@ -22,11 +20,25 @@ const ScenarioResults: FC<ScenarioResultsProps> = ({
   userProfile,
   activeScenario, 
   onRunNew,
-  onAdjustScenario 
+  onAdjustScenario,
+  onSaveResult,
+  savedResults = []
 }) => {
-  const [recommendations, setRecommendations] = useState<Recommendation[]>(MOCK_RECOMMENDATIONS);
   const [showAdjustPanel, setShowAdjustPanel] = useState(false);
   const [adjustedCost, setAdjustedCost] = useState(activeScenario.totalCost.toString());
+  const [appliedRecommendationsHistory, setAppliedRecommendationsHistory] = useState<Recommendation[]>([]);
+  const [runCount, setRunCount] = useState(1);
+
+  const projectedBalance = totalBalance - activeScenario.totalCost;
+
+  const [recommendations, setRecommendations] = useState<Recommendation[]>(() => 
+    generateRecommendations(userProfile, activeScenario.title, activeScenario.totalCost, projectedBalance)
+  );
+
+  useEffect(() => {
+    const newRecs = generateRecommendations(userProfile, activeScenario.title, activeScenario.totalCost, projectedBalance);
+    setRecommendations(newRecs);
+  }, [activeScenario, userProfile, projectedBalance]);
 
   const handleToggleRecommendation = (id: string) => {
     setRecommendations(recs => 
@@ -36,22 +48,18 @@ const ScenarioResults: FC<ScenarioResultsProps> = ({
     );
   };
 
-  // Calculate before/after states
   const analysis = useMemo(() => {
     const scenarioCost = activeScenario.totalCost;
-    const projectedBalance = totalBalance - scenarioCost;
+    const currentProjectedBalance = totalBalance - scenarioCost;
     
-    // Calculate impact on monthly savings based on scenario type
     const monthlyImpact = activeScenario.impactPeriod === 'recurring' 
       ? activeScenario.costEachPeriod 
       : 0;
     const projectedMonthlySavings = monthlySavings - monthlyImpact;
     
-    // Calculate savings rate
     const currentSavingsRate = (monthlySavings / userProfile.monthlyIncome) * 100;
     const projectedSavingsRate = (projectedMonthlySavings / userProfile.monthlyIncome) * 100;
     
-    // Calculate projections (simple compound interest approximation)
     const yearlyReturn = userProfile.riskTolerance === 'aggressive' ? 0.10 : 
                          userProfile.riskTolerance === 'moderate' ? 0.07 : 0.04;
     
@@ -59,20 +67,20 @@ const ScenarioResults: FC<ScenarioResultsProps> = ({
     const currentProjection5Year = totalBalance * Math.pow(1 + yearlyReturn, 5) + 
                                     (monthlySavings * 12 * 5 * (1 + yearlyReturn * 2.5));
     
-    const afterProjection1Year = projectedBalance * (1 + yearlyReturn) + (projectedMonthlySavings * 12);
-    const afterProjection5Year = projectedBalance * Math.pow(1 + yearlyReturn, 5) + 
+    const afterProjection1Year = currentProjectedBalance * (1 + yearlyReturn) + (projectedMonthlySavings * 12);
+    const afterProjection5Year = currentProjectedBalance * Math.pow(1 + yearlyReturn, 5) + 
                                   (projectedMonthlySavings * 12 * 5 * (1 + yearlyReturn * 2.5));
 
-    // Calculate change percentages
-    const balanceChange = ((projectedBalance - totalBalance) / totalBalance) * 100;
+    const balanceChange = ((currentProjectedBalance - totalBalance) / totalBalance) * 100;
     const savingsRateChange = projectedSavingsRate - currentSavingsRate;
     const projection1YearChange = ((afterProjection1Year - currentProjection1Year) / currentProjection1Year) * 100;
     const projection5YearChange = ((afterProjection5Year - currentProjection5Year) / currentProjection5Year) * 100;
 
-    // Calculate selected recommendations impact
     const selectedRecommendations = recommendations.filter(r => r.checked);
     const recommendationsImpact = selectedRecommendations.reduce((sum, r) => sum + (r.impact || 0), 0);
-    const balanceWithRecommendations = projectedBalance + recommendationsImpact;
+    const balanceWithRecommendations = currentProjectedBalance + recommendationsImpact;
+
+    const appliedImpact = appliedRecommendationsHistory.reduce((sum, r) => sum + (r.impact || 0), 0);
 
     return {
       before: {
@@ -83,7 +91,7 @@ const ScenarioResults: FC<ScenarioResultsProps> = ({
         projection5Year: currentProjection5Year
       },
       after: {
-        balance: projectedBalance,
+        balance: currentProjectedBalance,
         monthlySavings: projectedMonthlySavings,
         savingsRate: projectedSavingsRate,
         projection1Year: afterProjection1Year,
@@ -97,9 +105,11 @@ const ScenarioResults: FC<ScenarioResultsProps> = ({
       },
       impact: scenarioCost,
       recommendationsImpact,
-      balanceWithRecommendations
+      balanceWithRecommendations,
+      appliedImpact,
+      selectedRecommendations
     };
-  }, [totalBalance, monthlySavings, activeScenario, userProfile, recommendations]);
+  }, [totalBalance, monthlySavings, activeScenario, userProfile, recommendations, appliedRecommendationsHistory]);
 
   const handleApplyAdjustment = () => {
     const newCost = parseFloat(adjustedCost) || 0;
@@ -108,6 +118,54 @@ const ScenarioResults: FC<ScenarioResultsProps> = ({
       totalCost: newCost
     });
     setShowAdjustPanel(false);
+  };
+
+  const handleApplyRecommendations = () => {
+    const selectedRecs = recommendations.filter(r => r.checked);
+    if (selectedRecs.length === 0) return;
+
+    setAppliedRecommendationsHistory(prev => [...prev, ...selectedRecs]);
+
+    const totalImpact = selectedRecs.reduce((sum, r) => sum + (r.impact || 0), 0);
+    
+    const savedResult: SavedScenarioResult = {
+      id: `result-${Date.now()}`,
+      scenarioTitle: activeScenario.title,
+      runDate: new Date().toISOString(),
+      totalCost: activeScenario.totalCost,
+      impactPeriod: activeScenario.impactPeriod,
+      beforeState: {
+        totalEquity: analysis.before.balance,
+        monthlyExpenses: userProfile.monthlyIncome - analysis.before.monthlySavings,
+        savingsRate: analysis.before.savingsRate
+      },
+      afterState: {
+        totalEquity: analysis.balanceWithRecommendations,
+        monthlyExpenses: userProfile.monthlyIncome - analysis.after.monthlySavings,
+        savingsRate: analysis.after.savingsRate,
+        projectedEquity1Year: analysis.after.projection1Year + totalImpact,
+        projectedEquity5Year: analysis.after.projection5Year + (totalImpact * 5)
+      },
+      recommendations: recommendations,
+      appliedRecommendations: selectedRecs,
+      outcomeStatus: analysis.balanceWithRecommendations >= analysis.before.balance ? 'positive' : 
+                     analysis.balanceWithRecommendations >= analysis.before.balance * 0.9 ? 'neutral' : 'negative'
+    };
+
+    if (onSaveResult) {
+      onSaveResult(savedResult);
+    }
+
+    const newProjectedBalance = analysis.balanceWithRecommendations;
+    const newRecs = generateRecommendations(
+      userProfile, 
+      activeScenario.title, 
+      activeScenario.totalCost - totalImpact,
+      newProjectedBalance
+    );
+    
+    setRecommendations(newRecs);
+    setRunCount(prev => prev + 1);
   };
 
   const selectedCount = recommendations.filter(r => r.checked).length;
@@ -272,7 +330,7 @@ const ScenarioResults: FC<ScenarioResultsProps> = ({
           <div>
             <h3>Personalized Recommendations</h3>
             <span className="recommendation-subtitle">
-              Based on your {userProfile.riskTolerance} risk profile
+              Based on your {userProfile.riskTolerance} risk profile {runCount > 1 && `(Run #${runCount})`}
             </span>
           </div>
           {selectedCount > 0 && (
@@ -284,6 +342,14 @@ const ScenarioResults: FC<ScenarioResultsProps> = ({
             </div>
           )}
         </div>
+
+        {appliedRecommendationsHistory.length > 0 && (
+          <div className="applied-recommendations-summary">
+            <span className="applied-label">✓ Previously applied: </span>
+            <span className="applied-count">{appliedRecommendationsHistory.length} recommendations</span>
+            <span className="applied-impact positive">+{formatCurrency(analysis.appliedImpact)} impact</span>
+          </div>
+        )}
         
         <div className="recommendation-list-container">
           <ul className="recommendation-list">
@@ -324,8 +390,12 @@ const ScenarioResults: FC<ScenarioResultsProps> = ({
         )}
         
         <div className="recommendation-actions">
-          <button className="scenario-button primary" disabled={selectedCount === 0}>
-            Apply {selectedCount} Recommendation{selectedCount !== 1 ? 's' : ''}
+          <button 
+            className="scenario-button primary" 
+            disabled={selectedCount === 0}
+            onClick={handleApplyRecommendations}
+          >
+            Apply {selectedCount} Recommendation{selectedCount !== 1 ? 's' : ''} & Re-analyze
           </button>
           <button 
             className="scenario-button secondary"
@@ -335,6 +405,38 @@ const ScenarioResults: FC<ScenarioResultsProps> = ({
           </button>
         </div>
       </div>
+
+      {/* Saved Scenario History */}
+      {savedResults.length > 0 && (
+        <div className="scenario-history-card">
+          <h3>Scenario History</h3>
+          <div className="history-list">
+            {savedResults.slice().reverse().map((result) => (
+              <div key={result.id} className={`history-item ${result.outcomeStatus}`}>
+                <div className="history-header">
+                  <span className="history-title">{result.scenarioTitle}</span>
+                  <span className={`history-status ${result.outcomeStatus}`}>
+                    {result.outcomeStatus === 'positive' ? '✓ Positive' : 
+                     result.outcomeStatus === 'neutral' ? '○ Neutral' : '✗ Negative'}
+                  </span>
+                </div>
+                <div className="history-details">
+                  <span className="history-date">
+                    {new Date(result.runDate).toLocaleDateString()}
+                  </span>
+                  <span className="history-applied">
+                    {result.appliedRecommendations.length} recommendations applied
+                  </span>
+                  <span className={`history-impact ${result.afterState.totalEquity >= result.beforeState.totalEquity ? 'positive' : 'negative'}`}>
+                    {result.afterState.totalEquity >= result.beforeState.totalEquity ? '+' : ''}
+                    {formatCurrency(result.afterState.totalEquity - result.beforeState.totalEquity)}
+                  </span>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      )}
     </>
   );
 };
