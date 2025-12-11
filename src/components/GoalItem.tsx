@@ -61,7 +61,7 @@ const GoalItem: FC<{ goal: Goal, onToggleComplete: (id: number | string) => void
             style={{ width: `${progressPercent}%` }}
           >
             {progressPercent > 20 && (
-              <span className="progress-percentage">{progressPercent.toFixed(0)}%</span>
+              <span className="progress-percentage"></span>
             )}
           </div>
         </div>
