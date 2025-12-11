@@ -59,6 +59,13 @@ export interface BankAccount {
   employerMatch?: number;
 }
 
+export interface UserGoal {
+  id: string;
+  name: string;
+  currentAmount: number;
+  targetAmount: number;
+}
+
 export interface UserFinancialProfile {
   id: string;
   name: string;
@@ -84,6 +91,8 @@ export interface UserFinancialProfile {
   };
   creditScore: number;
   riskTolerance: 'conservative' | 'moderate' | 'aggressive';
+  goals?: UserGoal[];
+  scenarioHistory?: SavedScenarioResult[];
 }
 
 // Scenario results with before/after comparison
@@ -104,6 +113,31 @@ export interface ScenarioResult {
     projectedEquity5Year: number;
   };
   recommendations: Recommendation[];
+}
+
+// Saved scenario result with applied recommendations
+export interface SavedScenarioResult {
+  id: string;
+  scenarioTitle: string;
+  scenarioDescription?: string;
+  runDate: string;
+  totalCost: number;
+  impactPeriod: string;
+  beforeState: {
+    totalEquity: number;
+    monthlyExpenses: number;
+    savingsRate: number;
+  };
+  afterState: {
+    totalEquity: number;
+    monthlyExpenses: number;
+    savingsRate: number;
+    projectedEquity1Year: number;
+    projectedEquity5Year: number;
+  };
+  recommendations: Recommendation[];
+  appliedRecommendations: Recommendation[];
+  outcomeStatus: 'positive' | 'neutral' | 'negative';
 }
 
 export type PageName = 'MY GOALS' | 'HOME' | 'SCENARIOS';
