@@ -11,9 +11,9 @@ interface HeaderProps {
 
 const Header: FC<HeaderProps> = ({ activeLink, onNavigate }) => {
   const links: { name: PageName; icon: string }[] = [
-    { name: "MY GOALS", icon: "🎯" },
-    { name: "HOME", icon: "📊" },
-    { name: "SCENARIOS", icon: "🔮" }
+    { name: "MY GOALS", icon: "" },
+    { name: "HOME", icon: "" },
+    { name: "SCENARIOS", icon: "" }
   ];
 
   return (

@@ -1,0 +1,4 @@
+# file to construct custom llm inference
+
+FROM gpt-oss:20b
+PARAMETER num_ctx 8192

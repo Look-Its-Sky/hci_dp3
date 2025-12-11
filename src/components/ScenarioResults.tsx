@@ -10,6 +10,7 @@ interface ScenarioResultsProps {
   activeScenario: NewScenarioData;
   onRunNew: () => void;
   onAdjustScenario: (adjusted: NewScenarioData) => void;
+  initialRecommendations?: Recommendation[];
   onSaveResult?: (result: SavedScenarioResult) => void;
   savedResults?: SavedScenarioResult[];
 }
