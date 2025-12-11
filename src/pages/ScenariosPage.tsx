@@ -1,10 +1,12 @@
 import { FC, useState, useMemo } from 'react';
 import type { NewScenarioData, Scenario, Recommendation } from '../types';
+import type { NewScenarioData, SavedScenarioResult } from '../types';
 import { formatCurrency } from '../utils';
-import { MOCK_IMPACT_DATA, MOCK_SAVED_SCENARIOS, MOCK_PRESET_SCENARIOS, MOCK_USER_PROFILE, calculateNetWorth, calculateMonthlySavings } from '../data';
+import { MOCK_SAVED_SCENARIOS, MOCK_PRESET_SCENARIOS, USER_PROFILES, calculateNetWorthForUser, calculateMonthlySavingsForUser } from '../data';
 import CreateScenarioModal from '../components/CreateScenarioModal';
 import ScenarioResults from '../components/ScenarioResults';
 import { analyzeScenario } from '../services/scenarioService';
+import { useAuth } from '../contexts/AuthContext';
 
 const MOCK_SCENARIO_DETAILS: Record<string, NewScenarioData> = {
   's1': { title: 'Aggressive Savings Plan', impactPeriod: 'recurring', totalCost: -5000, costEachPeriod: -1000, periodUnit: 'month' },
@@ -17,25 +19,18 @@ const MOCK_SCENARIO_DETAILS: Record<string, NewScenarioData> = {
   'p5': { title: 'Medical Emergency ($15k)', impactPeriod: 'one-time', totalCost: 15000, costEachPeriod: 0, periodUnit: 'year' },
 };
 
-/**
- * Main Component for the "SCENARIOS" page.
- * This component now manages two states:
- * 1. Scenario Setup (dropdowns)
- * 2. Scenario Results (charts and recommendations)
- */
 const ScenariosPage: FC = () => {
-  const longTermGoals = MOCK_IMPACT_DATA.filter(item => 
-    ['House Loan', 'Student Loan', 'Car Down Payment', 'Vacation Fund', 'Emergency Fund', 'Investments'].includes(item.name)
-  );
-
-  const totalBalance = calculateNetWorth();
-  const monthlySavings = calculateMonthlySavings();
+  const { currentUser } = useAuth();
+  const userProfile = currentUser || USER_PROFILES['user-001'];
+  
+  const totalBalance = calculateNetWorthForUser(userProfile);
+  const monthlySavings = calculateMonthlySavingsForUser(userProfile);
   
   const [selectedScenarioId, setSelectedScenarioId] = useState('');
   const [hasRunScenario, setHasRunScenario] = useState(false);
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [activeScenario, setActiveScenario] = useState<NewScenarioData | null>(null);
-  const [savedResults, setSavedResults] = useState<NewScenarioData[]>([]);
+  const [savedResults, setSavedResults] = useState<SavedScenarioResult[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string>('all');
   
   const [isLoading, setIsLoading] = useState(false);
@@ -80,7 +75,6 @@ const ScenariosPage: FC = () => {
   
 
     setActiveScenario(data);
-    setSavedResults(prev => [...prev, data]);
     setShowCreateModal(false);
     setHasRunScenario(true);
   };
@@ -143,7 +137,7 @@ const ScenariosPage: FC = () => {
         <ScenarioResults 
           totalBalance={totalBalance}
           monthlySavings={monthlySavings}
-          userProfile={MOCK_USER_PROFILE}
+          userProfile={userProfile}
           activeScenario={activeScenario}
           initialRecommendations={aiRecommendations}
           onRunNew={() => {
@@ -153,6 +147,8 @@ const ScenariosPage: FC = () => {
             setAiRecommendations(undefined);
           }}
           onAdjustScenario={handleAdjustAndRerun}
+          onSaveResult={handleSaveScenarioResult}
+          savedResults={savedResults}
         />
       </>
     );
@@ -178,7 +174,7 @@ const ScenariosPage: FC = () => {
           </div>
           <div className="snapshot-metric">
             <span className="metric-label">Risk Tolerance</span>
-            <span className="metric-value capitalize">{MOCK_USER_PROFILE.riskTolerance}</span>
+            <span className="metric-value capitalize">{userProfile.riskTolerance}</span>
           </div>
         </div>
       </div>
@@ -320,22 +316,22 @@ const ScenariosPage: FC = () => {
         {/* Recent Scenarios */}
         {savedResults.length > 0 && (
           <div className="scenario-section recent-scenarios">
-            <h3>Recent Scenarios</h3>
+            <h3>Scenario History</h3>
             <div className="recent-list">
-              {savedResults.slice(-3).reverse().map((result, index) => (
-                <button
-                  key={index}
-                  className="recent-scenario-item"
-                  onClick={() => {
-                    setActiveScenario(result);
-                    setHasRunScenario(true);
-                  }}
+              {savedResults.slice(-3).reverse().map((result) => (
+                <div
+                  key={result.id}
+                  className={`recent-scenario-item ${result.outcomeStatus}`}
                 >
-                  <span className="recent-title">{result.title}</span>
-                  <span className="recent-impact">
-                    {result.totalCost > 0 ? '-' : '+'}{formatCurrency(Math.abs(result.totalCost))}
+                  <span className="recent-title">{result.scenarioTitle}</span>
+                  <span className={`recent-status ${result.outcomeStatus}`}>
+                    {result.outcomeStatus === 'positive' ? '✓' : result.outcomeStatus === 'neutral' ? '○' : '✗'}
                   </span>
-                </button>
+                  <span className="recent-impact">
+                    {result.afterState.totalEquity >= result.beforeState.totalEquity ? '+' : ''}
+                    {formatCurrency(result.afterState.totalEquity - result.beforeState.totalEquity)}
+                  </span>
+                </div>
               ))}
             </div>
           </div>

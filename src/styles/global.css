@@ -2076,6 +2076,114 @@ body {
   margin-top: 0.25rem;
 }
 
+/* Applied Recommendations Summary */
+.applied-recommendations-summary {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.75rem 1rem;
+  background: var(--primary-50);
+  border-radius: var(--radius-md);
+  margin-bottom: 1rem;
+  font-size: 0.875rem;
+}
+.applied-label {
+  color: var(--primary-600);
+  font-weight: 500;
+}
+.applied-count {
+  color: var(--gray-700);
+}
+.applied-impact {
+  margin-left: auto;
+  font-weight: 600;
+}
+
+/* Scenario History Card */
+.scenario-history-card {
+  background: var(--white);
+  border-radius: var(--radius-xl);
+  padding: 1.5rem;
+  margin-top: 1.5rem;
+  box-shadow: var(--shadow-sm);
+  border: 1px solid var(--gray-100);
+}
+.scenario-history-card h3 {
+  font-size: 1.125rem;
+  font-weight: 600;
+  margin: 0 0 1rem 0;
+  color: var(--gray-800);
+}
+.history-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+.history-item {
+  padding: 1rem;
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--gray-200);
+  background: var(--gray-50);
+  transition: all var(--transition-fast);
+}
+.history-item:hover {
+  border-color: var(--gray-300);
+  background: var(--white);
+}
+.history-item.positive {
+  border-left: 4px solid var(--success-500);
+}
+.history-item.neutral {
+  border-left: 4px solid var(--warning-500);
+}
+.history-item.negative {
+  border-left: 4px solid var(--danger-500);
+}
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 0.5rem;
+}
+.history-title {
+  font-weight: 600;
+  color: var(--gray-800);
+}
+.history-status {
+  font-size: 0.75rem;
+  font-weight: 500;
+  padding: 0.25rem 0.5rem;
+  border-radius: var(--radius-full);
+}
+.history-status.positive {
+  background: var(--success-100);
+  color: var(--success-700);
+}
+.history-status.neutral {
+  background: var(--warning-100);
+  color: var(--warning-700);
+}
+.history-status.negative {
+  background: var(--danger-100);
+  color: var(--danger-700);
+}
+.history-details {
+  display: flex;
+  gap: 1rem;
+  font-size: 0.75rem;
+  color: var(--gray-600);
+}
+.history-impact {
+  margin-left: auto;
+  font-weight: 600;
+}
+.history-impact.positive {
+  color: var(--success-600);
+}
+.history-impact.negative {
+  color: var(--danger-600);
+}
+
 /* Page Transition */
 .page-fade-in {
   animation: fadeIn 0.3s ease-out;

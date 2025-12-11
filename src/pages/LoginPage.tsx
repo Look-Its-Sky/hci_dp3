@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
+import { VALID_LOGINS } from '../data';
 
 const LoginPage = () => {
   const [username, setUsername] = useState('');
@@ -14,8 +15,12 @@ const LoginPage = () => {
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
-    if (username === 'admin' && password === 'admin') {
-      login();
+    const validLogin = VALID_LOGINS.find(
+      (l) => l.username === username && l.password === password
+    );
+    
+    if (validLogin) {
+      login(validLogin.userId);
       navigate(from, { replace: true });
     } else {
       setError('Invalid username or password');
