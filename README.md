@@ -78,8 +78,76 @@ The UI is organized into three main pages, accessible via the bottom navigation 
     *   Users can select from pre-defined scenarios (e.g., "Market Crash") or saved custom scenarios from a dropdown menu.
     *   Provides an option to create a new, custom scenario with details like title, cost, and impact period.
     *   After running a scenario, the UI displays a "Scenario Results" chart and a list of actionable "Recommendations" to help the user adjust their financial plan.
+  
+**What Changed in the UI (DP6 Updates)**:
 
-## Requirements & Setup
+- Based on usability feedback and heuristic evaluation, we made UI improvements to increase clarity, reduce clutter, and improve recognition of key actions.
+- Key UI Updates
+- Improved dashboard readability: clearer visual hierarchy, reduced whitespace, and more consistent spacing so key information is easier to scan.
+- Clearer progress visibility: added more explicit progress indicators (numbers/labels where applicable) to reduce ambiguity in goal/impact visuals.
+- More consistent design system: unified colors, layout styles, and spacing across pages for a more cohesive experience.
+- Improved explanatory text: added brief descriptions to clarify what sections like Impact Summary and Scenarios represent.
+- Better action recognition: refined the “Run Scenario” vs “Create Scenario” interaction so users can more easily distinguish actions.
+
+**Core Features & Functionality (DP 6)**
+A. Home (Dashboard)
+The dashboard is the default landing view and provides a quick snapshot of financial status.
+
+Key elements:
+   *   Balance Display: Shows a top-level “balance” number to anchor the user’s current financial state (prototype/demo value).
+   *   Impact Summary Visualization: Displays a visual breakdown of financial items (e.g., debts, expenses, goals) to help users understand what categories have the largest impact.
+   *   Goal/Item Overview: Provides quick access to the user’s tracked items and progress at a glance.
+What users can do on Home:
+   *   Quickly check overall financial status
+   *   Interpret high-level “impact” distribution
+   *   an progress on goals and key categories
+
+B. My Goals (Goal Tracking)
+This page supports the core “financial preparedness” workflow: setting goals and tracking progress over time.
+
+Key features:
+   *   Goal List: Displays saved goals (e.g., “Car Downpayment,” “Student Loan”) with progress indicators.
+   *   Progress Visualization: Each goal includes a progress bar showing movement toward completion.
+   *   Add Goal Flow: A “+ Add Goal” action opens a form/modal where a user can enter goal details.
+   *   Completion Indicators: Users can mark goals complete and see clear visual signals for completed items.
+
+Typical user flow:
+   *   Open My Goals
+   *   Click Add Goal
+   *   Enter goal details (name + amount fields used in the prototype)
+   *   Submit to create the goal
+   *   Track progress visually through the goal list
+
+C. Scenarios (Worst-Case Planning)
+The scenario system allows users to test hypothetical future situations and receive guidance on adapting their plan.
+
+Key features:
+   *   Preset Scenarios: Users can choose pre-loaded events (example: “Market Crash”).
+   *   Custom Scenario Creation: Users can create their own scenario by entering parameters such as:
+   *   scenario title
+   *   impact duration/frequency fields
+   *   cost fields (depending on form)
+   *   Run Scenario: Executes the scenario and generates a results view.
+   *   Scenario Results Output: Displays an outcome visualization and a list of suggested adjustments. Allows you to click on those suggestions and gives you updated results, also outputs agraph for users to visualize their scenarios in numbers
+   *   Recommendations: The system provides actionable suggestions for how the user could adapt to stay afloat.
+
+Typical user flow:
+   *   Go to Scenarios
+   *   Choose a preset scenario OR create a custom scenario
+   *   Click Run Scenario
+   *   Review results + recommendations to adjust plan
+
+4. Requirements & Compatibility
+Recommended Browsers
+- Google Chrome (recommended)
+- Microsoft Edge
+- Mozilla Firefox
+
+Supported Devices
+- Desktop / laptop browsers (recommended for demo)
+- Mobile browsers supported (responsive design), but best viewed on a larger screen for scenario forms/results.
+
+## Requirements & Setup (the github)
 
 ### Prerequisites
 *   [Node.js](https://nodejs.org/) (v20.x or later recommended)
@@ -98,7 +166,7 @@ The UI is organized into three main pages, accessible via the bottom navigation 
     yarn install
     ```
 
-### Operating Instructions
+### Operating Instructions (on web)
 
 #### Running the UI (Web Browser)
 To run the application in a local development environment:
@@ -107,7 +175,7 @@ yarn start
 ```
 This will open the application in your default web browser, typically at `http://localhost:3000`. The page will automatically reload if you make any code changes.
 
-*   **Test Credentials**: No user ID or password is required.
+*   **Test Credentials**: userID: admin Password: admin
 *   **Browser Settings**: No special browser settings are needed. The application is responsive and should work on modern web browsers like Chrome, Firefox, and Edge.
 
 #### Running the UI (Mobile)
