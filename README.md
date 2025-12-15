@@ -147,6 +147,14 @@ Supported Devices
 - Desktop / laptop browsers (recommended for demo)
 - Mobile browsers supported (responsive design), but best viewed on a larger screen for scenario forms/results.
 
+## How to Run the UI
+(Recommended): Run the Live Prototype
+**Open**: https://hci-dp3.vercel.app/
+**Browser Settings**: No special browser settings are needed. The application is responsive and should work on modern web browsers like Chrome, Firefox, and Edge.
+Login Info:
+*   UserID: admin
+*   Password: admin 
+
 ## Requirements & Setup (the github)
 
 ### Prerequisites
@@ -166,17 +174,8 @@ Supported Devices
     yarn install
     ```
 
-### Operating Instructions (on web)
+### Operating Instructions (for mobile)
 
-#### Running the UI (Web Browser)
-To run the application in a local development environment:
-```sh
-yarn start
-```
-This will open the application in your default web browser, typically at `http://localhost:3000`. The page will automatically reload if you make any code changes.
-
-*   **Test Credentials**: userID: admin Password: admin
-*   **Browser Settings**: No special browser settings are needed. The application is responsive and should work on modern web browsers like Chrome, Firefox, and Edge.
 
 #### Running the UI (Mobile)
 To run the application on a mobile device or simulator, you will need to configure your environment for native iOS or Android development.
@@ -200,6 +199,5 @@ To run the application on a mobile device or simulator, you will need to configu
 
 ## Implementation Limitations
 *   **No Backend/Database**: This application is a front-end prototype and does not connect to a real backend or database. All data (goals, scenarios, balances, etc.) is mocked within the [`src/App.tsx`](src/App.tsx) file and will reset on every page refresh.
-*   **Static Calculations**: The financial "scenario running" and "impact summary" are for demonstration purposes only. The results are based on pre-defined mock data and do not perform real-time financial calculations.
-*   **No User Authentication**: There is no login or user account system. The experience is the same for all users and is not persistent.
+*   **Static or demo-based calculations**: Scenario and impact logic is for demonstration and does not reflect real financial forecasting.
 *   **Single File Architecture**: For simplicity in this prototype, most of the application's logic, components, and styles are contained within a single file: [`src/App.tsx`](src/App.tsx). In a production-scale application, these would be split into separate files and folders for better organization and maintainability.
