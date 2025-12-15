@@ -52,7 +52,7 @@ You don’t have to ever use `eject`. The curated feature set is suitable for sm
 You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
 To learn React, check out the [React documentation](https://reactjs.org/).
-# Financial Tracker Application
+# Financial Tracker Application - Financial DNA
 
 This project is a financial tracking and scenario planning application built with React and TypeScript. It allows users to manage their financial goals, view an impact summary of their finances, and run "what-if" scenarios to see potential effects on their financial health.
 
