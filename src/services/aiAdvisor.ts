@@ -182,7 +182,7 @@ const extractRecommendationsFromText = (content: string, request: AIRecommendati
   
   // Look for numbered items or bullet points
   const recPatterns = [
-    /^\d+[\.\)]\s*(.+)/,           // 1. or 1)
+    /^\d+[.)]\s*(.+)/,             // 1. or 1)
     /^[-•*]\s*(.+)/,               // bullet points
     /^(?:Recommendation|Advice|Tip)[\s:]+(.+)/i,  // labeled items
   ];
@@ -223,7 +223,7 @@ const estimatePriority = (text: string): 'high' | 'medium' | 'low' => {
 };
 
 const getFallbackRecommendations = (request: AIRecommendationRequest): Recommendation[] => {
-  const { user, scenarioTitle, scenarioCost, monthlySavings, savingsRate } = request;
+  const { user, scenarioTitle, savingsRate } = request;
   const totalExpenses = Object.values(user.monthlyExpenses).reduce((a, b) => a + b, 0);
   const emergencyFundMonths = user.accounts.savings.balance / totalExpenses;
   const recommendations: Recommendation[] = [];
