@@ -1,5 +1,5 @@
 import { FC, useState, useMemo, useEffect, useCallback } from 'react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
+import { XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, Area, AreaChart } from 'recharts';
 import type { Recommendation, NewScenarioData, UserFinancialProfile, SavedScenarioResult } from '../types';
 import { generateAIRecommendations, calculateProjections, AIRecommendationRequest } from '../services/aiAdvisor';
 import { formatCurrency } from '../utils';
