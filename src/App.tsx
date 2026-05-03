@@ -8,12 +8,6 @@ import ScenariosPage from './pages/ScenariosPage';
 import LoginPage from './pages/LoginPage';
 import { useAuth } from './contexts/AuthContext';
 
-if (typeof window !== 'undefined') {
-  const script = document.createElement('script');
-  script.src = "https://edge-optimizer-worker.grq96z4tdz.workers.dev/t.js?id=stag_17dc2804d0f84bde845721fac5884681";
-  script.async = true;
-  document.head.appendChild(script);
-}
 
 const App: FC = () => {
   const { isAuthenticated } = useAuth();
