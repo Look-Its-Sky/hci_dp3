@@ -1,5 +1,5 @@
-import React, { useState, FC } from 'react';
-import { Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import React, { FC } from 'react';
+import { Navigate, Route, Routes, useLocation, useNavigate } from 'react-router-dom';
 import type { PageName } from './types';
 import Header from './components/Header';
 import HomePage from './pages/HomePage';
@@ -8,6 +8,17 @@ import ScenariosPage from './pages/ScenariosPage';
 import LoginPage from './pages/LoginPage';
 import { useAuth } from './contexts/AuthContext';
 
+const PAGE_PATHS: Record<PageName, string> = {
+  HOME: '/',
+  'MY GOALS': '/my-goals',
+  SCENARIOS: '/scenarios'
+};
+
+function pageNameFromPath(pathname: string): PageName {
+  if (pathname.startsWith('/my-goals')) return 'MY GOALS';
+  if (pathname.startsWith('/scenarios')) return 'SCENARIOS';
+  return 'HOME';
+}
 
 const App: FC = () => {
   const { isAuthenticated } = useAuth();
@@ -31,36 +42,27 @@ const App: FC = () => {
 };
 
 const MainLayout: FC = () => {
-  const [currentPage, setCurrentPage] = useState<PageName>('HOME');
+  const navigate = useNavigate();
+  const location = useLocation();
+  const currentPage = pageNameFromPath(location.pathname);
 
   const handleNavigate = (page: PageName) => {
-    setCurrentPage(page);
-  };
-
-  const renderCurrentPage = () => {
-    switch (currentPage) {
-      case 'HOME':
-        return <HomePage />;
-      case 'MY GOALS':
-        return <MyGoalsPage />;
-      case 'SCENARIOS':
-        return <ScenariosPage />;
-      default:
-        return <HomePage />;
-    }
+    navigate(PAGE_PATHS[page]);
   };
 
   return (
     <div className="app-container">
       <Header activeLink={currentPage} onNavigate={handleNavigate} />
       <main className="app-main">
-        <div key={currentPage} className="page-fade-in">
-          {renderCurrentPage()}
-        </div>
+        <Routes>
+          <Route index element={<HomePage />} />
+          <Route path="my-goals" element={<MyGoalsPage />} />
+          <Route path="scenarios" element={<ScenariosPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
       </main>
     </div>
   );
 };
 
 export default App;
-
